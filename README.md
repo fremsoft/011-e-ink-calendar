@@ -5,8 +5,7 @@ Mostra in tempo reale gli eventi della giornata, evidenziando **il giorno corren
 Basato su **ESP32-WROOM-32D**, compatibile con **Arduino IDE**.
 Lavora a batteria 
 
-* Ispirato al progetto di Eric di "That Project"  
-* [Fridge Calendar su GitHub](https://github.com/0015/Fridge-Calendar)
+* Ispirato al progetto di Eric di "That Project"  [Fridge Calendar su GitHub](https://github.com/0015/Fridge-Calendar)
 
 ---
 
