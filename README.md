@@ -1,8 +1,21 @@
 # 🗓️ eInk Calendar ESP32
+# 🗓️ eInk Calendar ESP32
 
 Calendario connesso **WiFi** a **Google Calendar**, visualizzato su un **display eInk da 7,5" (GDEY075Z08)**.  
 Mostra in tempo reale gli eventi della giornata, evidenziando **il giorno corrente in rosso** e **l’evento in corso con una cornice nera**.  
 Basato su **ESP32-WROOM-32D**, compatibile con **Arduino IDE**.
+Lavora a batteria 
+
+* Ispirato al progetto di Eric di "That Project"  
+* [Fridge Calendar su GitHub](https://github.com/0015/Fridge-Calendar)
+
+---
+
+## 🎥 Video dimostrativo
+
+Per vedere il progetto in azione, guarda il video dimostrativo che mostra come configurare l’ESP32, collegarlo al Google Calendar e visualizzare gli eventi sul display e-ink.
+
+📺 Guarda il video qui: [Guarda il video](https://youtube.com/@fremsoft)
 
 ---
 
@@ -44,6 +57,10 @@ Questo progetto permette di visualizzare gli eventi del tuo **Google Calendar** 
 * Gestione automatica dell’**ora legale (Europa/Roma)**  
 * Rendering grafico semplificato per eInk a tre colori  
 * Evidenziazione chiara di eventi in corso e giorno attuale
+* **Aggiornamento dei dati ogni 10 minuti** 
+* Alimentazione tramite **batteria al litio** con circuito di ricarica **TP4056**, per un funzionamento continuo e sicuro
+* Ricarica della batteria con cavo USB-C o micro-USB
+
 
 ---
 
@@ -119,7 +136,9 @@ const char* password = "<tua password>";
 
 ## 🖥️ Compilazione (Arduino IDE)
 
-Apri `eInkCalendar.ino`
+Assicurati di aver caricato le librerie allegate nel progetto.
+
+Apri `eInkCalendar.ino`.
 
 Imposta:
 * Scheda: **WEMOS LOLIN32**
@@ -134,6 +153,11 @@ Imposta:
 
 Il firmware usa il fuso **Europe/Rome** con supporto automatico per l’ora legale.
 Gli eventi vengono memorizzati anche in formato raw (minuti, ore, giorno, mese) per evitare discrepanze tra orari UTC e locali.
+Per modificare la timezone, modifica `gcalendar.ino` alla seguente riga:
+
+```cpp
+const char* tz = "CET-1CEST,M3.5.0/2,M10.5.0/3";  // Europe/Rome
+````
 
 ---
 
@@ -142,10 +166,8 @@ Gli eventi vengono memorizzati anche in formato raw (minuti, ore, giorno, mese) 
 | Elemento        | Colore / Stile                     |
 | --------------- | ---------------------------------- |
 | Giorno corrente | Sfondo **rosso**, testo bianco     |
-| Evento in corso | **Cornice nera** attorno al blocco |
+| Evento in corso | **Cornice nera** attorno al testo  |
 | Altri eventi    | Sfondo bianco, testo nero          |
-
-Il rendering utilizza **filledRect** per ogni evento, cambiando solo il colore di riempimento o del bordo a seconda dello stato.
 
 ---
 
