@@ -108,11 +108,11 @@ Impostazioni e condivisione → Integra calendario → ID calendario
 
 ## ⚙️ Configurazione WiFi
 
-Copia `credentials_example.h` in `credentials.h` e inserisci i tuoi dati:
+Sostituisci nel file `gcalendar.ino` il testo tra virgolette con il SSID e password della tua connessione WiFi:
 
 ```cpp
-#define WIFI_SSID "NomeRete"
-#define WIFI_PASS "PasswordRete"
+const char* ssid = "<tuo SSID>";
+const char* password = "<tua password>";
 ````
 
 ---
