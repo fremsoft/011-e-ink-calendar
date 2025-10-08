@@ -108,7 +108,7 @@ Impostazioni e condivisione → Integra calendario → ID calendario
 
 ## ⚙️ Configurazione WiFi
 
-Sostituisci nel file `gcalendar.ino` il testo tra virgolette con il SSID e password della tua connessione WiFi:
+Sostituisci nel file `gcalendar.ino` il testo tra virgolette con il SSID e la password della tua connessione WiFi:
 
 ```cpp
 const char* ssid = "<tuo SSID>";
@@ -119,11 +119,14 @@ const char* password = "<tua password>";
 
 ## 🖥️ Compilazione (Arduino IDE)
 
+Apri `eInkCalendar.ino`
+
+Imposta:
 * Scheda: **WEMOS LOLIN32**
 * Flash: **4 MB**
 * Partition scheme: **No OTA (Large APP)**
 
-Apri `011-e-ink-calendar.ino` e compila normalmente.
+ e compila normalmente.
 
 ---
 
