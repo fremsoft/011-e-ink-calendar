@@ -1,5 +1,4 @@
 # 🗓️ eInk Calendar ESP32
-# 🗓️ eInk Calendar ESP32
 
 Calendario connesso **WiFi** a **Google Calendar**, visualizzato su un **display eInk da 7,5" (GDEY075Z08)**.  
 Mostra in tempo reale gli eventi della giornata, evidenziando **il giorno corrente in rosso** e **l’evento in corso con una cornice nera**.  
