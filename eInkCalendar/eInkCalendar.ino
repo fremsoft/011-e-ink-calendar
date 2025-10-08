@@ -3,6 +3,9 @@
  * usa display GDEY075Z08 
  * https://www.good-display.com/product/394.html
  *
+ * 🛒 https://s.click.aliexpress.com/e/_c4r9YQeb  // Display 
+ * 🛒 https://s.click.aliexpress.com/e/_c4t9ZVYb  // ESP32 controller
+ *
  * ispirato al progetto di Eric di "That Project"
  * https://github.com/0015/Fridge-Calendar
  *
