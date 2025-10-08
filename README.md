@@ -69,27 +69,11 @@ Per collegare l’ESP32 al tuo calendario, serve un **Service Account JSON**.
 * Nome: `gcalendar-esp32`  
 * Ruolo: **Viewer (Visualizzatore)**
 
-### 4️⃣ Condivisione del calendario con il Service Account
+### 4️⃣ Genera la chiave JSON
 
-Per permettere all’ESP32 di leggere gli eventi dal tuo Google Calendar:
-
-1. Vai su [Google Calendar](https://calendar.google.com)  
-2. Clicca sull’icona **⚙️ → Impostazioni**  
-3. Seleziona il calendario che vuoi condividere  
-4. Vai su **Impostazioni calendario → Condivisione con persone e gruppi → Aggiungi persone e gruppi**  
-5. Inserisci l’indirizzo e-mail del Service Account, che trovi in Google Cloud Console:  
-```
-
-Google Cloud Console → IAM & Admin → gcalendar-esp32 → Entità con accesso
-gcalendar-esp32@<tuo-progetto>.iam.gserviceaccount.com
-
-```
-6. Imposta il permesso su **Vedere tutti i dettagli dell’evento**  
-7. Per ogni calendario che vuoi recuperare:
-* Clicca sui **tre puntini → Impostazioni e condivisione → Integra calendario**  
-* Copia l’**ID calendario**  
-* Inserisci l’ID nel file `gcalendar.ino`, nell’array `calendarIds[][2] = { ... }`
-
+* Nella lista degli account di servizio, seleziona `gcalendar-esp32`  
+* Vai su **Chiavi → Aggiungi chiave → Crea nuova chiave → JSON**  
+* Scarica il file `.json` e rinominalo in:
 
 ```
 
