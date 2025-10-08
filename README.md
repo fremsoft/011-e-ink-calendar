@@ -1,6 +1,3 @@
-Perfetto! Ecco il README già in **formato Markdown** pronto da copiare in `README.md`:
-
-```markdown
 # 🗓️ eInk Calendar ESP32
 
 Calendario connesso **WiFi** a **Google Calendar**, visualizzato su un **display eInk da 7,5" (GDEY075Z08)**.  
@@ -162,10 +159,3 @@ Bologna, Italia
 
 Questo progetto è rilasciato sotto licenza **GNU GPL v3**.
 Puoi studiarlo, modificarlo e ridistribuirlo, a condizione di mantenere la stessa licenza e citare l’autore originale.
-
-```
-
----
-
-Se vuoi, posso anche preparare una **versione con screenshot/anteprima del calendario** già formattata in Markdown, così il README risulta più “professionale” e accattivante. Vuoi che lo faccia?
-```
