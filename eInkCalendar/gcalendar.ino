@@ -91,6 +91,7 @@ void connectWiFi() {
   
   if (ret != 0) {
     Serial.printf("✗ Errore inizializzazione random: -0x%04x\n", -ret);
+    printError("Errore inizializzazione random");
   } else {
     Serial.println("✓ Generatore random inizializzato");
   }
@@ -103,9 +104,13 @@ void connectWiFi() {
 
   WiFi.begin(ssid, password);
   Serial.print("Connecting to WiFi");
+  int tentativi=0;
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
+    if (tentativi ++ > 50) { 
+      printError("Errore connessione WiFi");
+    }
   }
   Serial.println("\nWiFi connesso!");
   Serial.print("IP: ");
@@ -636,4 +641,24 @@ void getEventsAndDisplay(ScreenMode mode, time_t offset_days) {
   } else {
     Serial.println("Errore: impossibile ottenere il token!");
   }
+}
+
+void printError(const char * error) {
+
+  drawError(error);
+
+  // 0=T0, 2=T1, 4=T2, 12, 13, 14, 15, 25, 26, 27, 32, 33, 34, 35, 36, 39
+  uint64_t mask = (1ULL << PIN_BUTTON_MODE) | (1ULL << PIN_BUTTON_PIU) | (1ULL << PIN_BUTTON_MENO);
+  Serial.printf("Wake up mask: %016llX\r\n", mask);
+  esp_sleep_enable_ext1_wakeup(mask, ESP_EXT1_WAKEUP_ANY_HIGH);
+
+  freeMemGrafica();
+
+  esp_sleep_enable_timer_wakeup(SLEEP_DURATION_US);
+
+  Serial.println("Vado in deep sleep...");
+  Serial.flush();
+
+  esp_deep_sleep_start();
+
 }

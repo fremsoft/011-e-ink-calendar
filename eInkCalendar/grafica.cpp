@@ -723,3 +723,19 @@ void drawCalendarMonth(time_t offset_days, CalendarEvent allEvents[], int nEvent
   EPD_WhiteScreen_ALL(datasBW, datasRW);
   Serial.println("Calendario mensile disegnato!");
 }
+
+void drawError(const char * error) {
+
+	char str[32];
+
+  EPD_Init(); // inizializza il display 
+	
+	// Inizializza i buffer a bianco 
+	memset(datasBW, 0x00, EPD_ARRAY); 
+	memset(datasRW, 0x00, EPD_ARRAY); 
+
+  drawTextFont(200, 200, error, &FreeSansBold18pt7b, PIXEL_RED, EPD_WIDTH-400);
+  
+  EPD_WhiteScreen_ALL(datasBW, datasRW); 
+	Serial.println("Errore disegnato!");
+}

@@ -20,4 +20,6 @@ void drawCalendar5Days(time_t offset_days, CalendarEvent allEvents[], int nEvent
 void drawCalendarWeek(time_t offset_days, CalendarEvent allEvents[], int nEvents);
 void drawCalendarMonth(time_t offset_days, CalendarEvent allEvents[], int nEvents);
 
+void drawError(const char * error);
+
 #endif
