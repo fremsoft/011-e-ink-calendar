@@ -451,7 +451,7 @@ void getAllCalendarEvents(String accessToken, int daysBefore = 1, int daysAfter 
 
   for (int i = 0; i < numCalendars; i++) {
     int esito = 0;
-    while ((esito == 0) && ( tentativi < N_MAX_TENTATIVI)) {
+    while ((esito == 0) && ( tentativi < (numCalendars+N_MAX_TENTATIVI))) {
       String url = "https://www.googleapis.com/calendar/v3/calendars/";
       url += calendarIds[i][0];
       url += "/events?timeMin=" + String(timeMin);
@@ -557,8 +557,8 @@ void getAllCalendarEvents(String accessToken, int daysBefore = 1, int daysAfter 
     }
   }
 
-  if (tentativi > 1) {
-    sprintf(messageWarning, "problemi di sincronizzazione con Google Calendar!\nho fatto %d tentativi", tentativi);
+  if (tentativi > numCalendars) {
+    sprintf(messageWarning, "problemi di sincronizzazione con Google Calendar!\nho fatto %d tentativi", tentativi-numCalendars+1);
   }
 
   // Ordinamento cronologico (bubble sort semplice)
