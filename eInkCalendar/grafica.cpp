@@ -435,7 +435,7 @@ void drawCalendarDay(time_t offset_days, CalendarEvent allEvents[], int nEvents)
     getTextBounds(messageWarning, &FreeSansOblique12pt7b, &dx, &dy, &w, &h, EPD_WIDTH-40);
     fillRect ((EPD_WIDTH-w)/2-20, EPD_HEIGHT-20-40-h, (EPD_WIDTH+w)/2+20, EPD_HEIGHT-20, PIXEL_RED);
     drawRect ((EPD_WIDTH-w)/2-20, EPD_HEIGHT-20-40-h, (EPD_WIDTH+w)/2+20, EPD_HEIGHT-20, PIXEL_BLACK);
-    drawTextFont((EPD_WIDTH-w)/2, EPD_HEIGHT-20-20, messageWarning, &FreeSansOblique12pt7b, PIXEL_WHITE, EPD_WIDTH-40);
+    drawTextFont((EPD_WIDTH-w)/2, EPD_HEIGHT-h-20, messageWarning, &FreeSansOblique12pt7b, PIXEL_WHITE, EPD_WIDTH-40);
   }
 
   EPD_WhiteScreen_ALL(datasBW, datasRW); 
@@ -523,7 +523,7 @@ void drawCalendar5Days(time_t offset_days, CalendarEvent allEvents[], int nEvent
     getTextBounds(messageWarning, &FreeSansOblique12pt7b, &dx, &dy, &w, &h, EPD_WIDTH-40);
     fillRect ((EPD_WIDTH-w)/2-20, EPD_HEIGHT-20-40-h, (EPD_WIDTH+w)/2+20, EPD_HEIGHT-20, PIXEL_RED);
     drawRect ((EPD_WIDTH-w)/2-20, EPD_HEIGHT-20-40-h, (EPD_WIDTH+w)/2+20, EPD_HEIGHT-20, PIXEL_BLACK);
-    drawTextFont((EPD_WIDTH-w)/2, EPD_HEIGHT-20-20, messageWarning, &FreeSansOblique12pt7b, PIXEL_WHITE, EPD_WIDTH-40);
+    drawTextFont((EPD_WIDTH-w)/2, EPD_HEIGHT-h-20, messageWarning, &FreeSansOblique12pt7b, PIXEL_WHITE, EPD_WIDTH-40);
   }
 
   EPD_WhiteScreen_ALL(datasBW, datasRW);
@@ -612,7 +612,7 @@ void drawCalendarWeek(time_t offset_days, CalendarEvent allEvents[], int nEvents
     getTextBounds(messageWarning, &FreeSansOblique12pt7b, &dx, &dy, &w, &h, EPD_WIDTH-40);
     fillRect ((EPD_WIDTH-w)/2-20, EPD_HEIGHT-20-40-h, (EPD_WIDTH+w)/2+20, EPD_HEIGHT-20, PIXEL_RED);
     drawRect ((EPD_WIDTH-w)/2-20, EPD_HEIGHT-20-40-h, (EPD_WIDTH+w)/2+20, EPD_HEIGHT-20, PIXEL_BLACK);
-    drawTextFont((EPD_WIDTH-w)/2, EPD_HEIGHT-20-20, messageWarning, &FreeSansOblique12pt7b, PIXEL_WHITE, EPD_WIDTH-40);
+    drawTextFont((EPD_WIDTH-w)/2, EPD_HEIGHT-h-20, messageWarning, &FreeSansOblique12pt7b, PIXEL_WHITE, EPD_WIDTH-40);
   }
 
   EPD_WhiteScreen_ALL(datasBW, datasRW); 
@@ -743,7 +743,7 @@ void drawCalendarMonth(time_t offset_days, CalendarEvent allEvents[], int nEvent
     getTextBounds(messageWarning, &FreeSansOblique12pt7b, &dx, &dy, &w, &h, EPD_WIDTH-40);
     fillRect ((EPD_WIDTH-w)/2-20, EPD_HEIGHT-20-40-h, (EPD_WIDTH+w)/2+20, EPD_HEIGHT-20, PIXEL_RED);
     drawRect ((EPD_WIDTH-w)/2-20, EPD_HEIGHT-20-40-h, (EPD_WIDTH+w)/2+20, EPD_HEIGHT-20, PIXEL_BLACK);
-    drawTextFont((EPD_WIDTH-w)/2, EPD_HEIGHT-20-20, messageWarning, &FreeSansOblique12pt7b, PIXEL_WHITE, EPD_WIDTH-40);
+    drawTextFont((EPD_WIDTH-w)/2, EPD_HEIGHT-h-20, messageWarning, &FreeSansOblique12pt7b, PIXEL_WHITE, EPD_WIDTH-40);
   }
 
   EPD_WhiteScreen_ALL(datasBW, datasRW);
@@ -766,7 +766,7 @@ void drawError(const char * error) {
     getTextBounds(messageWarning, &FreeSansOblique12pt7b, &dx, &dy, &w, &h, EPD_WIDTH-40);
     fillRect ((EPD_WIDTH-w)/2-20, EPD_HEIGHT-20-40-h, (EPD_WIDTH+w)/2+20, EPD_HEIGHT-20, PIXEL_RED);
     drawRect ((EPD_WIDTH-w)/2-20, EPD_HEIGHT-20-40-h, (EPD_WIDTH+w)/2+20, EPD_HEIGHT-20, PIXEL_BLACK);
-    drawTextFont((EPD_WIDTH-w)/2, EPD_HEIGHT-20-20, messageWarning, &FreeSansOblique12pt7b, PIXEL_WHITE, EPD_WIDTH-40);
+    drawTextFont((EPD_WIDTH-w)/2, EPD_HEIGHT-h-20, messageWarning, &FreeSansOblique12pt7b, PIXEL_WHITE, EPD_WIDTH-40);
   }
 
   EPD_WhiteScreen_ALL(datasBW, datasRW); 
