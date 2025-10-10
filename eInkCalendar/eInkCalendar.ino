@@ -105,7 +105,7 @@ void printLocalTime() {
 
 
 void setup() {
-	Serial.begin(115200);
+  Serial.begin(115200);
 
   pinMode(PIN_BUTTON_MODE, INPUT);
   pinMode(PIN_BUTTON_PIU,  INPUT);
@@ -164,9 +164,9 @@ void setup() {
   }
 
   printMemoryInfo();
-	setupDisplay();
+  setupDisplay();
   printMemoryInfo();
-	connectWiFi();
+  connectWiFi();
   printMemoryInfo();
   
   getEventsAndDisplay( screenMode, offset_days );

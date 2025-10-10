@@ -20,7 +20,7 @@ const char *giorniSett[8] = {"Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "D
 const char *mesiShort[12] = {"GEN", "FEB", "MAR", "APR", "MAG", "GIU", "LUG", "AGO", "SET", "OTT", "NOV", "DIC"}; 
 const char *mesiLong[12] = {"gennaio", "febbraio", "marzo", "aprile", "maggio", "giungo", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"}; 
 
-
+extern char messageWarning[256];
 
 #ifndef _swap_int16_t
 #define _swap_int16_t(a, b)  { int16_t t = a; a = b; b = t; }
@@ -431,6 +431,13 @@ void drawCalendarDay(time_t offset_days, CalendarEvent allEvents[], int nEvents)
     fillRect (7, y, EPD_WIDTH-7, y2, PIXEL_WHITE);
   }
 
+  if (messageWarning[0] != '\0' ) {
+    getTextBounds(messageWarning, &FreeSansOblique12pt7b, &dx, &dy, &w, &h, EPD_WIDTH-40);
+    fillRect ((EPD_WIDTH-w)/2-20, EPD_HEIGHT-20-40-h, (EPD_WIDTH+w)/2+20, EPD_HEIGHT-20, PIXEL_RED);
+    drawRect ((EPD_WIDTH-w)/2-20, EPD_HEIGHT-20-40-h, (EPD_WIDTH+w)/2+20, EPD_HEIGHT-20, PIXEL_BLACK);
+    drawTextFont((EPD_WIDTH-w)/2, EPD_HEIGHT-20-20, messageWarning, &FreeSansOblique12pt7b, PIXEL_WHITE, EPD_WIDTH-40);
+  }
+
   EPD_WhiteScreen_ALL(datasBW, datasRW); 
 	Serial.println("Calendario disegnato!");
 }
@@ -510,6 +517,13 @@ void drawCalendar5Days(time_t offset_days, CalendarEvent allEvents[], int nEvent
     fillRect(x0 + margin, y, x1 - margin, y2, PIXEL_WHITE);
 
     base += 86400;
+  }
+
+  if (messageWarning[0] != '\0' ) {
+    getTextBounds(messageWarning, &FreeSansOblique12pt7b, &dx, &dy, &w, &h, EPD_WIDTH-40);
+    fillRect ((EPD_WIDTH-w)/2-20, EPD_HEIGHT-20-40-h, (EPD_WIDTH+w)/2+20, EPD_HEIGHT-20, PIXEL_RED);
+    drawRect ((EPD_WIDTH-w)/2-20, EPD_HEIGHT-20-40-h, (EPD_WIDTH+w)/2+20, EPD_HEIGHT-20, PIXEL_BLACK);
+    drawTextFont((EPD_WIDTH-w)/2, EPD_HEIGHT-20-20, messageWarning, &FreeSansOblique12pt7b, PIXEL_WHITE, EPD_WIDTH-40);
   }
 
   EPD_WhiteScreen_ALL(datasBW, datasRW);
@@ -594,10 +608,15 @@ void drawCalendarWeek(time_t offset_days, CalendarEvent allEvents[], int nEvents
     base += 86400; // giorno successivo
   }
 
-	// Mostra tutto sul display 
-	EPD_WhiteScreen_ALL(datasBW, datasRW); 
+  if (messageWarning[0] != '\0' ) {
+    getTextBounds(messageWarning, &FreeSansOblique12pt7b, &dx, &dy, &w, &h, EPD_WIDTH-40);
+    fillRect ((EPD_WIDTH-w)/2-20, EPD_HEIGHT-20-40-h, (EPD_WIDTH+w)/2+20, EPD_HEIGHT-20, PIXEL_RED);
+    drawRect ((EPD_WIDTH-w)/2-20, EPD_HEIGHT-20-40-h, (EPD_WIDTH+w)/2+20, EPD_HEIGHT-20, PIXEL_BLACK);
+    drawTextFont((EPD_WIDTH-w)/2, EPD_HEIGHT-20-20, messageWarning, &FreeSansOblique12pt7b, PIXEL_WHITE, EPD_WIDTH-40);
+  }
 
-	Serial.println("Calendario disegnato!");
+  EPD_WhiteScreen_ALL(datasBW, datasRW); 
+  Serial.println("Calendario disegnato!");
 }
 
 void drawCalendarMonth(time_t offset_days, CalendarEvent allEvents[], int nEvents) {
@@ -720,13 +739,20 @@ void drawCalendarMonth(time_t offset_days, CalendarEvent allEvents[], int nEvent
     }
   }
 
+  if (messageWarning[0] != '\0' ) {
+    getTextBounds(messageWarning, &FreeSansOblique12pt7b, &dx, &dy, &w, &h, EPD_WIDTH-40);
+    fillRect ((EPD_WIDTH-w)/2-20, EPD_HEIGHT-20-40-h, (EPD_WIDTH+w)/2+20, EPD_HEIGHT-20, PIXEL_RED);
+    drawRect ((EPD_WIDTH-w)/2-20, EPD_HEIGHT-20-40-h, (EPD_WIDTH+w)/2+20, EPD_HEIGHT-20, PIXEL_BLACK);
+    drawTextFont((EPD_WIDTH-w)/2, EPD_HEIGHT-20-20, messageWarning, &FreeSansOblique12pt7b, PIXEL_WHITE, EPD_WIDTH-40);
+  }
+
   EPD_WhiteScreen_ALL(datasBW, datasRW);
   Serial.println("Calendario mensile disegnato!");
 }
 
 void drawError(const char * error) {
-
-	char str[32];
+  char str[32];
+  int16_t dx, dy, w, h;
 
   EPD_Init(); // inizializza il display 
 	
@@ -736,6 +762,13 @@ void drawError(const char * error) {
 
   drawTextFont(200, 200, error, &FreeSansBold18pt7b, PIXEL_RED, EPD_WIDTH-400);
   
+  if (messageWarning[0] != '\0' ) {
+    getTextBounds(messageWarning, &FreeSansOblique12pt7b, &dx, &dy, &w, &h, EPD_WIDTH-40);
+    fillRect ((EPD_WIDTH-w)/2-20, EPD_HEIGHT-20-40-h, (EPD_WIDTH+w)/2+20, EPD_HEIGHT-20, PIXEL_RED);
+    drawRect ((EPD_WIDTH-w)/2-20, EPD_HEIGHT-20-40-h, (EPD_WIDTH+w)/2+20, EPD_HEIGHT-20, PIXEL_BLACK);
+    drawTextFont((EPD_WIDTH-w)/2, EPD_HEIGHT-20-20, messageWarning, &FreeSansOblique12pt7b, PIXEL_WHITE, EPD_WIDTH-40);
+  }
+
   EPD_WhiteScreen_ALL(datasBW, datasRW); 
 	Serial.println("Errore disegnato!");
 }

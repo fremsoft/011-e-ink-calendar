@@ -37,6 +37,8 @@ mbedtls_ctr_drbg_context ctr_drbg;
 CalendarEvent allEvents[MAX_EVENTS];
 int allEventsCount = 0;
 
+char messageWarning[256];
+
 const char PRIVATE_KEY[] PROGMEM = R"KEY(
 -----BEGIN PRIVATE KEY-----
 MIIE...D7hdIy=
@@ -77,6 +79,8 @@ void syncTime() {
 }
 
 void connectWiFi() {
+  messageWarning[0] = '\0';
+
   // generatore dei numeri random
   mbedtls_entropy_init(&entropy);
   mbedtls_ctr_drbg_init(&ctr_drbg);
@@ -88,7 +92,7 @@ void connectWiFi() {
                                    &entropy,
                                    (const unsigned char*)pers, 
                                    strlen(pers));
-  
+
   if (ret != 0) {
     Serial.printf("✗ Errore inizializzazione random: -0x%04x\n", -ret);
     printError("Errore inizializzazione random");
@@ -423,6 +427,8 @@ uint32_t calcEventsHash() {
 
 void getAllCalendarEvents(String accessToken, int daysBefore = 1, int daysAfter = 30) {
   allEventsCount = 0;
+  messageWarning[0] = '\0';
+  int tentativi = 0;
 
   time_t nowSec = time(nullptr);
   time_t startSec = nowSec - daysBefore*24*60*60;
@@ -444,105 +450,115 @@ void getAllCalendarEvents(String accessToken, int daysBefore = 1, int daysAfter 
             timeinfoEnd.tm_mday);
 
   for (int i = 0; i < numCalendars; i++) {
-    String url = "https://www.googleapis.com/calendar/v3/calendars/";
-    url += calendarIds[i][0];
-    url += "/events?timeMin=" + String(timeMin);
-    url += "&timeMax=" + String(timeMax);
-    url += "&singleEvents=true&orderBy=startTime";
-    url += "&fields=items(summary,start,end)";
-    //url += "&timeZone=CEST"; 
-    url += "&timeZone=Europe/Rome";  // così non va
+    int esito = 0;
+    while ((esito == 0) && ( tentativi < N_MAX_TENTATIVI)) {
+      String url = "https://www.googleapis.com/calendar/v3/calendars/";
+      url += calendarIds[i][0];
+      url += "/events?timeMin=" + String(timeMin);
+      url += "&timeMax=" + String(timeMax);
+      url += "&singleEvents=true&orderBy=startTime";
+      url += "&fields=items(summary,start,end)";
+      //url += "&timeZone=CEST"; 
+      url += "&timeZone=Europe/Rome";  // così non va
 
-    Serial.println(url);
-    Serial.printf("=== Calendario: %s ===\n\n", calendarIds[i][1]);
+      tentativi ++;
 
-    HTTPClient http;
-    http.begin(url);
-    http.addHeader("Authorization", "Bearer " + accessToken);
+      Serial.println(url);
+      Serial.printf("=== Calendario: %s ===\n\n", calendarIds[i][1]);
 
-    int code = http.GET();
-    String payload = http.getString(); 
-    Serial.println("Payload length: " + String(payload.length()));
+      HTTPClient http;
+      http.begin(url);
+      http.addHeader("Authorization", "Bearer " + accessToken);
+
+      int code = http.GET();
+      String payload = http.getString(); 
+      Serial.println("Payload length: " + String(payload.length()));
     
-    if (code == 200) {
-      //StaticJsonDocument<2048> doc;
-      //DynamicJsonDocument doc(10 * 1024);
-      //DeserializationError error = deserializeJson(doc, payload);
-      //String payload = http.getString();   // aspetta che arrivi tutto
-      DynamicJsonDocument doc(64*1024);   // dimensione grande per un mese
-      DeserializationError error = deserializeJson(doc, payload);
+      if (code == 200) {
+        //StaticJsonDocument<2048> doc;
+        //DynamicJsonDocument doc(10 * 1024);
+        //DeserializationError error = deserializeJson(doc, payload);
+        //String payload = http.getString();   // aspetta che arrivi tutto
+        DynamicJsonDocument doc(64*1024);   // dimensione grande per un mese
+        DeserializationError error = deserializeJson(doc, payload);
    
-      if (!error) {
-        JsonArray items = doc["items"].as<JsonArray>();
-        for (size_t j = 0; (j < items.size()) && (allEventsCount < MAX_EVENTS); j++) {
-          JsonObject item = items[j]; 
-          // serializeJson(item, Serial);  Serial.println(); 
+        if (!error) {
+          JsonArray items = doc["items"].as<JsonArray>();
+          for (size_t j = 0; (j < items.size()) && (allEventsCount < MAX_EVENTS); j++) {
+            JsonObject item = items[j]; 
+            // serializeJson(item, Serial);  Serial.println(); 
           
-          strncpy(allEvents[allEventsCount].title, (const char*)(item["summary"] | ""), MAX_STRING);
-          allEvents[allEventsCount].title[MAX_STRING-1] = 0;
-          allEvents[allEventsCount].calendar_id = i;
-          allEvents[allEventsCount].start_time_utc  = 0;
-          allEvents[allEventsCount].durationMinutes = 0;
+            strncpy(allEvents[allEventsCount].title, (const char*)(item["summary"] | ""), MAX_STRING);
+            allEvents[allEventsCount].title[MAX_STRING-1] = 0;
+            allEvents[allEventsCount].calendar_id = i;
+            allEvents[allEventsCount].start_time_utc  = 0;
+            allEvents[allEventsCount].durationMinutes = 0;
            
-          if (item["start"].containsKey("dateTime")) {
-            // Evento con orario specifico
-            String dt = item["start"]["dateTime"].as<String>();
-            allEvents[allEventsCount].start_time_utc = parseDateTime(dt.c_str(), &allEvents[allEventsCount]); 
+            if (item["start"].containsKey("dateTime")) {
+              // Evento con orario specifico
+              String dt = item["start"]["dateTime"].as<String>();
+              allEvents[allEventsCount].start_time_utc = parseDateTime(dt.c_str(), &allEvents[allEventsCount]); 
             
-            if (item["end"].containsKey("dateTime")) {
-              time_t endTime;
-              dt = item["end"]["dateTime"].as<String>();
-              endTime = parseDateTime(dt.c_str(), NULL); 
-              allEvents[allEventsCount].durationMinutes = (endTime - allEvents[allEventsCount].start_time_utc) / 60;
+              if (item["end"].containsKey("dateTime")) {
+                time_t endTime;
+                dt = item["end"]["dateTime"].as<String>();
+                endTime = parseDateTime(dt.c_str(), NULL); 
+                allEvents[allEventsCount].durationMinutes = (endTime - allEvents[allEventsCount].start_time_utc) / 60;
+              } 
             } 
-          } 
-          else if (item["start"].containsKey("date")) {
-            // Evento giornaliero
-            String d = item["start"]["date"].as<String>();
-            allEvents[allEventsCount].start_time_utc = parseDate(d.c_str(), &allEvents[allEventsCount]); 
+            else if (item["start"].containsKey("date")) {
+              // Evento giornaliero
+              String d = item["start"]["date"].as<String>();
+              allEvents[allEventsCount].start_time_utc = parseDate(d.c_str(), &allEvents[allEventsCount]); 
             
-            if (item["end"].containsKey("date")) {
-              time_t endTime;
-              d = item["end"]["date"].as<String>();
-              endTime = parseDate(d.c_str(), NULL); 
-              allEvents[allEventsCount].durationMinutes = (endTime - allEvents[allEventsCount].start_time_utc) / 60;
-            } 
+              if (item["end"].containsKey("date")) {
+                time_t endTime;
+                d = item["end"]["date"].as<String>();
+                endTime = parseDate(d.c_str(), NULL); 
+                allEvents[allEventsCount].durationMinutes = (endTime - allEvents[allEventsCount].start_time_utc) / 60;
+              } 
+            }
+
+            allEventsCount++;
           }
-		  
-          allEventsCount++;
+          esito = 1;
+        } 
+        else {
+          Serial.printf("✗ Errore parsing JSON: %s\n", error.c_str());
+          Serial.println("\nRisposta completa:");
+          Serial.println(payload);
         }
       } 
-      else {
-        Serial.printf("✗ Errore parsing JSON: %s\n", error.c_str());
+      else if (code == 403) {
+        Serial.println("✗ ERRORE 403: Accesso negato!");
+        Serial.println("SOLUZIONE:");
+        Serial.println("1. Vai su Google Calendar");
+        Serial.printf("2. Condividi il calendario '%s' con:\n", calendarIds[i][0]);
+        Serial.printf("   %s\n", CLIENT_EMAIL);
+        Serial.println("3. Imposta permessi 'Visualizza tutti i dettagli'");
         Serial.println("\nRisposta completa:");
         Serial.println(payload);
       }
-    } 
-    else if (code == 403) {
-      Serial.println("✗ ERRORE 403: Accesso negato!");
-      Serial.println("SOLUZIONE:");
-      Serial.println("1. Vai su Google Calendar");
-      Serial.printf("2. Condividi il calendario '%s' con:\n", calendarIds[i][0]);
-      Serial.printf("   %s\n", CLIENT_EMAIL);
-      Serial.println("3. Imposta permessi 'Visualizza tutti i dettagli'");
-      Serial.println("\nRisposta completa:");
-      Serial.println(payload);
+      else if (code == 401) {
+        Serial.println("✗ ERRORE 401: Token non valido o scaduto");
+        Serial.println("Risposta:");
+        Serial.println(payload);
+      } 
+      else if (code == 404) {
+        Serial.println("✗ ERRORE 404: Calendario non trovato");
+        Serial.printf("Verifica che '%s' sia l'ID corretto\n", calendarIds[i][0]);
+      } 
+      else {
+        Serial.printf("✗ Errore HTTP: %d\n", code);
+        Serial.println("Risposta:");
+        Serial.println(payload);
+      }
+      http.end();
     }
-    else if (code == 401) {
-      Serial.println("✗ ERRORE 401: Token non valido o scaduto");
-      Serial.println("Risposta:");
-      Serial.println(payload);
-    } 
-    else if (code == 404) {
-      Serial.println("✗ ERRORE 404: Calendario non trovato");
-      Serial.printf("Verifica che '%s' sia l'ID corretto\n", calendarIds[i][0]);
-    } 
-    else {
-      Serial.printf("✗ Errore HTTP: %d\n", code);
-      Serial.println("Risposta:");
-      Serial.println(payload);
-    }
-    http.end();
+  }
+
+  if (tentativi > 1) {
+    sprintf(messageWarning, "problemi di sincronizzazione con Google Calendar!\nho fatto %d tentativi", tentativi);
   }
 
   // Ordinamento cronologico (bubble sort semplice)

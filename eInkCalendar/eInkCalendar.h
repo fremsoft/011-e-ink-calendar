@@ -15,6 +15,7 @@
 #define PIN_BUTTON_PIU  PIN_A4
 
 #define LONG_PRESS_MS   2000
+#define N_MAX_TENTATIVI   10
 
 // Tempo di sleep in microsecondi (10 minuti = 600 secondi)
 #define SLEEP_DURATION_US 600000000ULL  // 10 minuti        10000000ULL //10 secondi
