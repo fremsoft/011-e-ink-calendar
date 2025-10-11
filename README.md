@@ -7,6 +7,9 @@ Lavora a batteria
 
 * Ispirato al progetto di Eric di "That Project"  [Fridge Calendar su GitHub](https://github.com/0015/Fridge-Calendar)
 
+![e-ink Google Calendar](e-ink-calendar.png)
+
+
 ---
 
 ## 🎥 Video dimostrativo
