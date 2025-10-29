@@ -358,6 +358,29 @@ char * minutesToCustomString(int duration) {
   return str;
 }
 
+void printBattery() {
+  const int ADC_MIN = 2290;  // ≈ 3.70 V
+  const int ADC_MAX = 2600;  // ≈ 4.20 V
+  int level_4096 = constrain(analogRead ( PIN_BATTERY ), ADC_MIN, ADC_MAX);
+  float voltage = (level_4096 * 3.3)/4096.0;
+  int perc = (100.0 * (level_4096 - ADC_MIN)) / (ADC_MAX - ADC_MIN);
+
+  char str[16];
+  int x1 = 700;
+  int y1 = 5;
+  int x2 = 780;
+  int y2 = 35;
+  
+  fillRect (x1, y1, x2, y2, PIXEL_WHITE);
+  drawRect(x1+7, y1+3, x2-3, y2-3, PIXEL_BLACK);
+  fillRect(x1+3, y1+10, x1+7, y2-10, PIXEL_BLACK);
+  fillRect(x2-5, y1+5, x2-5 - (((x1+9) - (x2-5)) * perc) / 100, y2-5, PIXEL_BLACK);
+
+  sprintf(str, "%d%%", perc);
+  drawTextFont(735, 25, str, &FreeSansBold7pt7b, PIXEL_RED, 100);
+  
+}
+
 void drawCalendarDay(time_t offset_days, CalendarEvent allEvents[], int nEvents) {
   time_t base = time(nullptr) + offset_days * 86400;
   struct tm t; 
@@ -437,6 +460,8 @@ void drawCalendarDay(time_t offset_days, CalendarEvent allEvents[], int nEvents)
     drawRect ((EPD_WIDTH-w)/2-20, EPD_HEIGHT-20-40-h, (EPD_WIDTH+w)/2+20, EPD_HEIGHT-20, PIXEL_BLACK);
     drawTextFont((EPD_WIDTH-w)/2, EPD_HEIGHT-h-20, messageWarning, &FreeSansOblique12pt7b, PIXEL_WHITE, EPD_WIDTH-40);
   }
+
+  printBattery();
 
   EPD_WhiteScreen_ALL(datasBW, datasRW); 
 	Serial.println("Calendario disegnato!");
@@ -526,6 +551,8 @@ void drawCalendar5Days(time_t offset_days, CalendarEvent allEvents[], int nEvent
     drawTextFont((EPD_WIDTH-w)/2, EPD_HEIGHT-h-20, messageWarning, &FreeSansOblique12pt7b, PIXEL_WHITE, EPD_WIDTH-40);
   }
 
+  printBattery();
+
   EPD_WhiteScreen_ALL(datasBW, datasRW);
   Serial.println("Calendario verticale disegnato!");
 }
@@ -614,6 +641,8 @@ void drawCalendarWeek(time_t offset_days, CalendarEvent allEvents[], int nEvents
     drawRect ((EPD_WIDTH-w)/2-20, EPD_HEIGHT-20-40-h, (EPD_WIDTH+w)/2+20, EPD_HEIGHT-20, PIXEL_BLACK);
     drawTextFont((EPD_WIDTH-w)/2, EPD_HEIGHT-h-20, messageWarning, &FreeSansOblique12pt7b, PIXEL_WHITE, EPD_WIDTH-40);
   }
+
+  printBattery();
 
   EPD_WhiteScreen_ALL(datasBW, datasRW); 
   Serial.println("Calendario disegnato!");
@@ -745,6 +774,8 @@ void drawCalendarMonth(time_t offset_days, CalendarEvent allEvents[], int nEvent
     drawRect ((EPD_WIDTH-w)/2-20, EPD_HEIGHT-20-40-h, (EPD_WIDTH+w)/2+20, EPD_HEIGHT-20, PIXEL_BLACK);
     drawTextFont((EPD_WIDTH-w)/2, EPD_HEIGHT-h-20, messageWarning, &FreeSansOblique12pt7b, PIXEL_WHITE, EPD_WIDTH-40);
   }
+
+  printBattery();
 
   EPD_WhiteScreen_ALL(datasBW, datasRW);
   Serial.println("Calendario mensile disegnato!");

@@ -13,6 +13,7 @@
 #define PIN_BUTTON_MODE PIN_A0
 #define PIN_BUTTON_MENO PIN_A3
 #define PIN_BUTTON_PIU  PIN_A4
+#define PIN_BATTERY         A6   // Vbatt/2  partitore 1M // 1M
 
 #define LONG_PRESS_MS   2000
 #define N_MAX_TENTATIVI   10

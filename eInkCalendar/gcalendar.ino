@@ -112,7 +112,7 @@ void connectWiFi() {
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
-    if (tentativi ++ > 50) { 
+    if (tentativi ++ > 100) { 
       printError("Errore connessione WiFi");
     }
   }
