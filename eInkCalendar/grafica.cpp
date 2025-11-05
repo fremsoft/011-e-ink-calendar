@@ -373,8 +373,8 @@ void printBattery() {
   
   fillRect (x1, y1, x2, y2, PIXEL_WHITE);
   drawRect(x1+7, y1+3, x2-3, y2-3, PIXEL_BLACK);
-  fillRect(x1+3, y1+10, x1+7, y2-10, PIXEL_BLACK);
-  fillRect(x2-5, y1+5, x2-5 - (((x1+9) - (x2-5)) * perc) / 100, y2-5, PIXEL_BLACK);
+  drawRect(x1+3, y1+10, x1+7, y2-10, PIXEL_BLACK);
+  fillRect(x2-5, y1+5, x2-5 - (((x2-5) - (x1+9)) * perc) / 100, y2-5, PIXEL_BLACK);
 
   sprintf(str, "%d%%", perc);
   drawTextFont(735, 25, str, &FreeSansBold7pt7b, PIXEL_RED, 100);

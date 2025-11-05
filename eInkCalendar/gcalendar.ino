@@ -584,7 +584,7 @@ void getEventsAndDisplay(ScreenMode mode, time_t offset_days) {
     Serial.println("\n✓ Token pronto per le API Calendar!");
     Serial.printf("Token: %s...\n\n", accessToken.substring(0, 30).c_str());
         
-    switch( screenMode ) {
+    switch( mode ) {
 			case GIORNO : 
         getAllCalendarEvents(accessToken, 0-offset_days, 0+offset_days); 
         newHash = calcEventsHash();
