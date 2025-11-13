@@ -70,8 +70,28 @@
 #include <esp_heap_caps.h>
 #include <esp_sleep.h>
 
+#include <Preferences.h>
+
 RTC_DATA_ATTR ScreenMode screenMode = GIORNO;
 RTC_DATA_ATTR int offset_days = 0;
+
+Preferences prefs;
+
+void saveSettings() {
+  prefs.begin("calendar", false);  // namespace "calendar"
+  prefs.putInt("screenMode", (int)screenMode);
+  prefs.putInt("offsetDays", offset_days);
+  prefs.end();
+  Serial.printf("💾 Salvate impostazioni: screenMode=%d, offset_days=%d\n", screenMode, offset_days);
+}
+
+void loadSettings() {
+  prefs.begin("calendar", true);
+  screenMode = (ScreenMode)prefs.getInt("screenMode", MESE);  
+  offset_days = prefs.getInt("offsetDays", 0);
+  prefs.end();
+  Serial.printf("📥 Caricate impostazioni: screenMode=%d, offset_days=%d\n", screenMode, offset_days);
+}
 
 void printMemoryInfo() {
   // RAM libera generale
@@ -113,6 +133,8 @@ void setup() {
 
   esp_sleep_wakeup_cause_t cause = esp_sleep_get_wakeup_cause();
 
+  loadSettings(); 
+
   if (cause == ESP_SLEEP_WAKEUP_EXT1) {
     uint64_t wakeup_pin_mask = esp_sleep_get_ext1_wakeup_status();
     if (wakeup_pin_mask & (1ULL << PIN_BUTTON_MODE)) {
@@ -127,6 +149,7 @@ void setup() {
         if ((millis() - pressStart) >= LONG_PRESS_MS) {
           offset_days = 0; // azzera offset
           Serial.println("PRESSIONE LUNGA: azzerato offset_days");
+          saveSettings();
           break;
         }
       } while(digitalRead(PIN_BUTTON_MODE) == HIGH);
@@ -134,6 +157,7 @@ void setup() {
       if ((millis() - pressStart) < LONG_PRESS_MS) {
         screenMode = ScreenMode((screenMode + 1) % 4);
         Serial.printf("Cambio screenMode: %d\n", screenMode);
+        saveSettings();
       }
     }
     if (wakeup_pin_mask & (1ULL << PIN_BUTTON_PIU)) {
@@ -144,6 +168,7 @@ void setup() {
         case SETTIMANA : offset_days += 7; break;
         case MESE      : offset_days += 30; break;
       }
+      saveSettings();
     }
     if (wakeup_pin_mask & (1ULL << PIN_BUTTON_MENO)) {
       Serial.println("Sveglio da T2");
@@ -153,14 +178,15 @@ void setup() {
         case SETTIMANA : offset_days -= 7; break;
         case MESE      : offset_days -= 30; break;
       }
+      saveSettings();
     }
   } else if (cause == ESP_SLEEP_WAKEUP_TIMER) {
     Serial.println("Sveglio dal timer");
     // gestisci logica timer
   } else {
     Serial.println("Boot normale (power on / reset)");
-    screenMode = MESE;
-    offset_days = 0;
+    //screenMode = MESE;
+    //offset_days = 0;
   }
 
   printMemoryInfo();
