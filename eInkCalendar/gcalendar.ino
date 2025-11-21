@@ -19,7 +19,7 @@ const char* tz = "CET-1CEST,M3.5.0/2,M10.5.0/3";  // Europe/Rome
 const char* calendarIds[][2] = {
   {"calendario1@gmail.com", "LAVORO" },
   {"calendario2@gmail.com", "FAMIGLIA" },
-  {"calendario3@group.calendar.google.com", "IMPACT" }
+  {"calendario3@group.calendar.google.com", "ALTRO" }
 };
 const int numCalendars = sizeof(calendarIds) / sizeof(calendarIds[0]);
 
@@ -662,6 +662,8 @@ void getEventsAndDisplay(ScreenMode mode, time_t offset_days) {
 void printError(const char * error) {
 
   drawError(error);
+
+  lastEventsHash++;  // altrimenti quando sparisce l'errore non rinfresca
 
   // 0=T0, 2=T1, 4=T2, 12, 13, 14, 15, 25, 26, 27, 32, 33, 34, 35, 36, 39
   uint64_t mask = (1ULL << PIN_BUTTON_MODE) | (1ULL << PIN_BUTTON_PIU) | (1ULL << PIN_BUTTON_MENO);
