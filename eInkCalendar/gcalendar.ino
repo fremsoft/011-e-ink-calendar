@@ -587,7 +587,7 @@ void getEventsAndDisplay(ScreenMode mode, time_t offset_days) {
     switch( mode ) {
 			case GIORNO : 
         getAllCalendarEvents(accessToken, 0-offset_days, 0+offset_days); 
-        newHash = calcEventsHash();
+        newHash = calcEventsHash() + mode;
         if (newHash != lastEventsHash) {
           Serial.printf("⚡ Eventi cambiati [%08X] → aggiorno display\r\n", newHash);
           lastEventsHash = newHash;
@@ -599,7 +599,7 @@ void getEventsAndDisplay(ScreenMode mode, time_t offset_days) {
 				break;
 			case _5DAYS : 
         getAllCalendarEvents(accessToken, 1-offset_days, 5+offset_days); 
-				newHash = calcEventsHash();
+				newHash = calcEventsHash() + mode;
         if (newHash != lastEventsHash) {
           Serial.printf("⚡ Eventi cambiati [%08X] → aggiorno display\r\n", newHash);
           lastEventsHash = newHash;
@@ -611,7 +611,7 @@ void getEventsAndDisplay(ScreenMode mode, time_t offset_days) {
 				break;
 			case SETTIMANA : 
         getAllCalendarEvents(accessToken, 1-offset_days, 6+offset_days); 
-				newHash = calcEventsHash();
+				newHash = calcEventsHash() + mode;
         if (newHash != lastEventsHash) {
           Serial.printf("⚡ Eventi cambiati [%08X] → aggiorno display\r\n", newHash);
           lastEventsHash = newHash;
@@ -623,7 +623,7 @@ void getEventsAndDisplay(ScreenMode mode, time_t offset_days) {
 				break;
 			case MESE :
         getAllCalendarEvents(accessToken, 6-offset_days, 35+offset_days);  
-				newHash = calcEventsHash();
+				newHash = calcEventsHash() + mode;
         if (newHash != lastEventsHash) {
           Serial.printf("⚡ Eventi cambiati [%08X] → aggiorno display\r\n", newHash);
           lastEventsHash = newHash;

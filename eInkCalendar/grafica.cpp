@@ -163,24 +163,25 @@ void getTextBoundsNoWrap(const char *str, const GFXfont *font, int16_t *dx, int1
   *dy = maxy;
 }
 
-void getTextBounds(const char *str, const GFXfont *font, 
+void getTextBoundsMaxRows(const char *str, const GFXfont *font, 
                    int16_t *dx, int16_t *dy, int16_t *w, int16_t *h, 
-                   int16_t maxWidth) 
+                   int16_t maxWidth, int16_t nMaxRows) 
 {
   int16_t cursorX = 0, cursorY = 0;
   int16_t minx = 0x7FFF, miny = 0x7FFF, maxx = -1, maxy = -1;
   int16_t textsize_x = 1, textsize_y = 1;
+  int16_t nRows=0;
 
   const char *wordStart = str;
 
-  while (*str) {
+  while ((*str) && (nRows < nMaxRows))  {
     char c = *str;
     // una parola è delimitata da spazio, newline, carriage return, oppure fine stringa
     if ((c == ' ') || (c == '\n') || (c == '\r') || (*(str+1) == '\0')) {
       // calcola larghezza della parola
       int tempWidth = 0;
       const char *p = wordStart;
-      while (p <= str) {
+      while ((p <= str) && (nRows < nMaxRows)) {
         char ch = *p++;
         if ((ch < font->first) || (ch > font->last)) continue;
         GFXglyph *glyph = &(font->glyph[ch - font->first]);
@@ -191,11 +192,12 @@ void getTextBounds(const char *str, const GFXfont *font,
       if ((cursorX + tempWidth) > maxWidth) {
         cursorX = 0;
         cursorY += textsize_y * (uint8_t)pgm_read_byte(&font->yAdvance) - 5;
+        nRows ++;
       }
 
       // misura caratteri della parola
       p = wordStart;
-      while (p <= str) {
+      while ((p <= str) && (nRows < nMaxRows)) {
         char ch = *p++;
         if (ch < font->first || ch > font->last) continue;
         GFXglyph *glyph = &(font->glyph[ch - font->first]);
@@ -227,6 +229,7 @@ void getTextBounds(const char *str, const GFXfont *font,
       else if (c == '\n') {
         cursorX = 0;
         cursorY += textsize_y * (uint8_t)pgm_read_byte(&font->yAdvance) - 5;
+        nRows ++;
       } 
       else if (c == '\r') {
         cursorX = 0;
@@ -243,6 +246,12 @@ void getTextBounds(const char *str, const GFXfont *font,
   *dx = minx;
   *dy = miny;
 }
+
+void getTextBounds(const char *str, const GFXfont *font, 
+                   int16_t *dx, int16_t *dy, int16_t *w, int16_t *h, 
+                   int16_t maxWidth) {
+  getTextBoundsMaxRows(str, font, dx, dy, w, h, maxWidth, 1000);
+} 
 
 void drawCharFont(int x, int y, char c, const GFXfont *font, int color) {
   // Da Adafruit_GFX.cpp :
@@ -287,20 +296,21 @@ void drawCharFont(int x, int y, char c, const GFXfont *font, int color) {
   }
 }
 
-void drawTextFont(int x, int y, const char *str, const GFXfont *font, int color, int16_t maxWidth) {
+void drawTextFontMaxRows(int x, int y, const char *str, const GFXfont *font, int color, int16_t maxWidth, int16_t nMaxRows) {
   int cursorX = x;
-	int textsize_x = 1, textsize_y = 1;
+  int textsize_x = 1, textsize_y = 1;
+  int16_t nRows = 0;
 
   const char *wordStart = str;
   int wordWidth = 0;
 
-  while (*str) {
+  while ((*str) && (nRows < nMaxRows)) {
     char c = *str;
     if ((c == ' ') || (c == '\n') || (c == '\r') || (*(str+1) == '\0')) {
       // calcola la larghezza della parola
       int tempWidth = 0;
       const char *p = wordStart;
-      while (p <= str) {
+      while ((p <= str) && (nRows < nMaxRows)) {
         char ch = *p++;
         if ((ch < font->first) || (ch > font->last)) { continue; }
         GFXglyph *glyph = &(font->glyph[ch - font->first]);
@@ -311,11 +321,12 @@ void drawTextFont(int x, int y, const char *str, const GFXfont *font, int color,
       if ((cursorX + tempWidth) > (x + maxWidth)) {
         cursorX = x;
         y += textsize_y * (uint8_t)pgm_read_byte(&font->yAdvance) - 5;
+        nRows ++;
       }
 
       // disegna la parola
       p = wordStart;
-      while (p <= str) {
+      while ((p <= str) && (nRows < nMaxRows)) {
         char ch = *p++;
         if (ch < font->first || ch > font->last) continue;
         drawCharFont(cursorX, y, ch, font, color);
@@ -331,6 +342,7 @@ void drawTextFont(int x, int y, const char *str, const GFXfont *font, int color,
       else if (c == '\n') {
         cursorX = x;
         y += textsize_y * (uint8_t)pgm_read_byte(&font->yAdvance) - 5;
+        nRows ++;
       }
       else if (c == '\r') {
         cursorX = x;
@@ -340,6 +352,10 @@ void drawTextFont(int x, int y, const char *str, const GFXfont *font, int color,
     }
     str++;
   }
+}
+
+void drawTextFont(int x, int y, const char *str, const GFXfont *font, int color, int16_t maxWidth) {
+  drawTextFontMaxRows(x, y, str, font, color, maxWidth, 1000);
 }
 
 char * minutesToCustomString(int duration) {
@@ -533,8 +549,8 @@ void drawCalendar5Days(time_t offset_days, CalendarEvent allEvents[], int nEvent
         drawTextFont(x0 + 5, y + 17, ebuf, &FreeSansBold9pt7b, colorday, cellWidth - 10);
         getTextBounds(ebuf, &FreeSansBold9pt7b, &dx, &dy, &w, &h, cellWidth - 10);
         y += h+8;
-        drawTextFont(x0 + 5, y + 17, allEvents[i].title, &FreeSans9pt7b, colortxt, cellWidth - 10);
-        getTextBounds(allEvents[i].title, &FreeSans9pt7b, &dx, &dy, &w, &h, cellWidth - 10);
+        drawTextFontMaxRows(x0 + 5, y + 17, allEvents[i].title, &FreeSans9pt7b, colortxt, cellWidth - 10, 2);
+        getTextBoundsMaxRows(allEvents[i].title, &FreeSans9pt7b, &dx, &dy, &w, &h, cellWidth - 10, 2);
         y += h+13;
         if (y  > y2 - 14) { y = y2; }
       }  
@@ -623,8 +639,8 @@ void drawCalendarWeek(time_t offset_days, CalendarEvent allEvents[], int nEvents
         drawTextFont(x0+5, y+14, ebuf, &FreeSansBold7pt7b, colorday, dayWidth-10);
 			  getTextBounds(ebuf, &FreeSansBold7pt7b, &dx, &dy, &w, &h, dayWidth-10);
 			  y += 5+h;
-        drawTextFont(x0+5, y+14, allEvents[i].title, &FreeSansBold7pt7b, colortxt, dayWidth-10);
-			  getTextBounds(allEvents[i].title, &FreeSansBold7pt7b, &dx, &dy, &w, &h, dayWidth-10);
+        drawTextFontMaxRows(x0+5, y+14, allEvents[i].title, &FreeSansBold7pt7b, colortxt, dayWidth-10, 1);
+			  getTextBoundsMaxRows(allEvents[i].title, &FreeSansBold7pt7b, &dx, &dy, &w, &h, dayWidth-10, 1);
 			  y += 10+h;
         if ((y+10) >= y2-14) { y = y2; }
       }
