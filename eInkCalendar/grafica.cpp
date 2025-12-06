@@ -375,8 +375,9 @@ char * minutesToCustomString(int duration) {
 }
 
 void printBattery() {
-  const int ADC_MIN = 2029;  // ≈ 3.70 V
-  const int ADC_MAX = 2303;  // ≈ 4.20 V
+  // immaginando che l'andamento sia lineare
+  const int ADC_MIN = 1600;  // 1584 minimo valore rilevato prima di spegnersi
+  const int ADC_MAX = 2250;  // 2293 massimo valore rilevato al 100%
   int level_4096 = constrain(analogRead ( PIN_BATTERY ), ADC_MIN, ADC_MAX);
   float voltage = (level_4096 * 3.3)/4096.0;
   int perc = (100.0 * (level_4096 - ADC_MIN)) / (ADC_MAX - ADC_MIN);
